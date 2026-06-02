@@ -1,0 +1,46 @@
+{% extends "_base.html" %}
+{% block title %}Result — NeuroScan AI{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="result-hero {% if prediction == 0 %}negative{% endif %}">
+    <h2>{{ label }}</h2>
+    <div class="confidence">{{ confidence }}%</div>
+    <div>Model confidence · {{ model_name }}</div>
+    <div style="opacity:.85;margin-top:6px;font-size:.9rem">{{ timestamp }}</div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>📋 Personalised Recommendations</h2>
+    <ul class="recos">
+      {% for r in recommendations %}<li>{{ r }}</li>{% endfor %}
+    </ul>
+
+    <h2 style="margin-top:24px">🧾 Inputs Submitted</h2>
+    <table class="metrics">
+      <tr><th>Feature</th><th>Value</th></tr>
+      {% for k, v in features.items() %}
+        <tr><td>{{ k.replace('_',' ').title() }}</td><td>{{ v }}</td></tr>
+      {% endfor %}
+    </table>
+
+    <div class="actions">
+      <form method="POST" action="{{ url_for('report_pdf') }}" style="display:inline">
+        {% for k, v in features.items() %}
+          <input type="hidden" name="{{ k }}" value="{{
+            'yes' if k in ['family_history','speech_delay','social_difficulty','repetitive_behavior','learning_difficulty'] and v==1
+            else 'no' if k in ['family_history','speech_delay','social_difficulty','repetitive_behavior','learning_difficulty'] and v==0
+            else 'male' if k=='gender' and v==1
+            else 'female' if k=='gender' and v==0
+            else 'poor' if k=='eye_contact' and v==1
+            else 'normal' if k=='eye_contact' and v==0
+            else v
+          }}"/>
+        {% endfor %}
+        <button class="btn">⬇️ Download PDF Report</button>
+      </form>
+      <a class="btn secondary" href="{{ url_for('index') }}">← New Prediction</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

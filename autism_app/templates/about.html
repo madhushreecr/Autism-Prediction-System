@@ -1,0 +1,62 @@
+{% extends "_base.html" %}
+{% block title %}About & Dashboard — NeuroScan AI{% endblock %}
+
+{% block body %}
+<section class="hero">
+  <h1>About NeuroScan AI</h1>
+  <p>An open educational project that uses Machine Learning to support early
+  awareness of Autism Spectrum Disorder (ASD). Built with Python, Flask and Scikit-learn.</p>
+</section>
+
+<div class="container">
+  <div class="stats-grid">
+    <div class="stat"><div class="value" id="s-total">0</div><div class="label">Predictions made</div></div>
+    <div class="stat"><div class="value" id="s-asd">0</div><div class="label">ASD-positive</div></div>
+    <div class="stat"><div class="value" id="s-non">0</div><div class="label">Non-ASD</div></div>
+    <div class="stat"><div class="value">{{ sample_count }}</div><div class="label">Training samples</div></div>
+    <div class="stat"><div class="value">{{ pos_rate }}%</div><div class="label">Dataset ASD rate</div></div>
+  </div>
+
+  <div class="card">
+    <h2>📊 Model Performance</h2>
+    <div style="background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+      <p style="margin: 0; font-size: 14px; opacity: 0.9;">Best-performing Model</p>
+      <h3 style="margin: 8px 0; font-size: 24px;">{{ model_name }}</h3>
+      <div style="font-size: 36px; font-weight: bold; margin: 10px 0;">
+        {% for name, m in metrics.items() %}
+          {% if name == model_name %}
+            {{ '%.2f' % (m.accuracy * 100) }}%
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div style="display: inline-block; background: #10B981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 8px;">
+      </div>
+      <p style="margin: 0; font-size: 12px; opacity: 0.9;">Accuracy</p>
+    </div>
+    <table class="metrics">
+      <tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th></tr>
+      {% for name, m in metrics.items() %}
+        <tr>
+          <td>{{ name }}</td>
+          <td>{{ '%.3f' % m.accuracy }}</td>
+          <td>{{ '%.3f' % m.precision }}</td>
+          <td>{{ '%.3f' % m.recall }}</td>
+          <td>{{ '%.3f' % m.f1 }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+    <img class="chart-img" src="{{ url_for('static', filename='model_comparison.png') }}" alt="Model comparison chart"/>
+    <img class="chart-img" src="{{ url_for('static', filename='confusion_matrix.png') }}" alt="Confusion matrix"/>
+  </div>
+
+
+</div>
+
+<script>
+  fetch("/api/stats").then(r => r.json()).then(d => {
+    document.getElementById("s-total").textContent = d.total_predictions;
+    document.getElementById("s-asd").textContent = d.asd_predictions;
+    document.getElementById("s-non").textContent = d.non_asd_predictions;
+  });
+</script>
+{% endblock %}

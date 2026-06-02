@@ -1,0 +1,85 @@
+{% extends "_base.html" %}
+{% block title %}NeuroScan AI — Autism Detection System{% endblock %}
+
+{% block body %}
+<section class="hero">
+  <span class="badge">🧠 Powered by {{ model_name }}</span>
+  <h1>AI-Powered Autism Spectrum Screening</h1>
+  <p>Answer a few quick behavioural and developmental questions and get an instant ML-based screening result with personalised recommendations.</p>
+</section>
+
+<div class="container">
+  <div class="card" id="predict">
+    <h2>Screening Questionnaire</h2>
+    <p style="color:var(--muted);margin-top:-6px">All fields are required. This is an educational screening — not a medical diagnosis.</p>
+
+    {% if error %}<div class="error">⚠️ {{ error }}</div>{% endif %}
+
+    <form id="predict-form" method="POST" action="{{ url_for('predict_route') }}">
+      <div class="form-grid">
+        <div class="field">
+          <label>Age</label>
+          <input type="number" name="age" min="1" max="100" required placeholder="e.g. 7"/>
+        </div>
+        <div class="field">
+          <label>Gender</label>
+          <select name="gender" required>
+            <option value="">Select…</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Family history of autism</label>
+          <select name="family_history" required>
+            <option value="">Select…</option><option value="no">No</option><option value="yes">Yes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Speech delay</label>
+          <select name="speech_delay" required>
+            <option value="">Select…</option><option value="no">No</option><option value="yes">Yes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Social interaction difficulty</label>
+          <select name="social_difficulty" required>
+            <option value="">Select…</option><option value="no">No</option><option value="yes">Yes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Repetitive behaviour</label>
+          <select name="repetitive_behavior" required>
+            <option value="">Select…</option><option value="no">No</option><option value="yes">Yes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Eye contact</label>
+          <select name="eye_contact" required>
+            <option value="">Select…</option><option value="normal">Normal</option><option value="poor">Poor</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Learning difficulty</label>
+          <select name="learning_difficulty" required>
+            <option value="">Select…</option><option value="no">No</option><option value="yes">Yes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Anxiety level (0–10)</label>
+          <input type="number" name="anxiety_level" min="0" max="10" required placeholder="e.g. 4"/>
+        </div>
+        <div class="field">
+          <label>Communication score (0–10, higher = better)</label>
+          <input type="number" name="communication_score" min="0" max="10" required placeholder="e.g. 6"/>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn">🔍 Predict Now</button>
+        <button type="reset" class="btn secondary">Reset</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
